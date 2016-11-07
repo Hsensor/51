@@ -1,12 +1,59 @@
 TMOD 1.工作模式（定时/计数）2.工作方式3种
 TCON 控制启停
 
-1.定时计数器
+1.定时计数器(http://www.21ic.com/jichuzhishi/mcu/timer/2013-06-03/182908.html,http://wenku.baidu.com/link?url=F-cUml-NIKj2oF5LBx2zwJilQFx9mQNALZ_XJyM85SRaORfDkXHe6WUq98xeKvMmIT2dn3c610IJnazaAivjuFmzZib65LWg9PnoHLyhiC_,http://wenku.baidu.com/link?url=Cxk3hasROWhwCj3zE7kgUuQF_1xhMs_S6ic6yM4w2zwxU69Nidk2v8MXONdTPBXIYthif4hjhifOcDGQDzX4wjp6kC5_PAB4H27ndPg9U3a)
 
-TMODE (89H) T0	TH0 	TL0
-				0xXX	0xXX
-TCON  (88H) T1	TH1 	TL1
-				0xXX	0xXX
+TMODE (89H)  定时器/计数器模式控制寄存器(TIMER/COUNTER MODE CONTROL REGISTER) 
+	
+	D7		D6		D5		D4		D3		D2		D1		D0
+	GATE	C/T     M1		M0		GATE	C/T 	M1		M0
+	|--------定时器1---------|		|--------定时器0---------|
+	
+
+高四位控制T1,低四位控制T0
+
+Ⅰ，GATE——门控制。
+
+●GATE=1时，由外部中断引脚INT0、INT1来启动定时器T0、T1。
+
+当INT0引脚为高电平时TR0置位，启动定时器T0;
+
+当INT1引脚为高电平时TR1置位，启动定时器T1。
+
+●GATE=0时，仅由TR0,TR1置位分别启动定时器T0、T1。
+
+Ⅱ，C/T——功能选择位
+
+C/T=0时为定时功能，C/T=1时为计数功能。
+
+置位时选择计数功能，清零时选择定时功能。
+
+Ⅲ，M0、M1——方式选择功能
+
+由于有2位，因此有4种工作方式
+
+M1M0 工作方式 计数器模式 TMOD(设置定时器模式)
+
+0 0 方式0 13位计数器 TMOD=0x00
+
+0 1 方式1 16位计数器 TMOD=0x01
+
+1 0 方式2 自动重装8位计数器 TMOD=0x02
+
+1 1 方式3 T0分为2个8位独立计数器，T1为无中断重装8位计数器 TMOD=0x03
+
+单片机定时器0设置为工作方式1为TMOD=0x01;定时器1设置工作方式1时TMOD=0x10
+
+没有用到的定时器一般设置为0
+
+
+TCON  (88H)
+
+T0	TH0 	TL0
+	0xXX	0xXX
+ 
+T1	TH1 	TL1
+	0xXX	0xXX
 
 在每个机器周期到来时：T0就会自动加1，当TL0 加到0xFF时,就会使TH0加1
 					  当TH0=0xFF，并且 TL0=0xFF时，称作定时器溢出中断（只有在计数器计满溢出时才向CPU申请中断，占用CPU）
@@ -17,11 +64,13 @@ TCON  (88H) T1	TH1 	TL1
 一个状态周期 = 2*一个震荡周期 
 机器周期 =  6*状态周期 = 12*震荡周期
 
-
 12M的晶振
 1M=10^6 1MHZ = 1ms/10^6 = 1us
 一个机器周期 = 12*1/12MHZ =1MHZ = 1us
 
+
+定时器总中断EA=1;
+定时器0中断 ET0=1;
 
 
 
