@@ -49,11 +49,25 @@ M1M0 工作方式 计数器模式 TMOD(设置定时器模式)
 
 TCON  (88H)
 
-T0	TH0 	TL0
-	0xXX	0xXX
+TF1		TR1		TF0		TR0		IE1		IT1		IE0		IT0
+(高4位内部中断有关)					(低4位外部中断有关)
+
+
+1.TF1,TF0--计数溢出标志位
+定时器T0或T1计数溢出时，有硬件自动将此位   “置1”
+TF1,TF0可以有程序查询，也是定时中断的请求源
+
+2.TR1,TR0--计数运行控制位
+TR0,TR1 = 1;启动定时器/计数工作
+TR0,TR1 = 0;停止定时器/计数工作
+
+
+
+T0	TH0(high)	TL0(low)
+	0xXX		0xXX
  
-T1	TH1 	TL1
-	0xXX	0xXX
+T1	TH1(high) 	TL1(low)
+	0xXX		0xXX
 
 在每个机器周期到来时：T0就会自动加1，当TL0 加到0xFF时,就会使TH0加1
 					  当TH0=0xFF，并且 TL0=0xFF时，称作定时器溢出中断（只有在计数器计满溢出时才向CPU申请中断，占用CPU）
